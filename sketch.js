@@ -14,7 +14,7 @@ function setup() {
   sun = loadImage("sun.jpg");
   video = createVideo("transit.mov");
   video.loop();
-  for (var s = 0; s < 5000; s++) {
+  for (var s = 0; s < 6000; s++) {
     SB.push(new sunBall(100, random(360), s, width / 2, height / 2));
   }
   video.hide();
@@ -29,8 +29,11 @@ function setup() {
 }
 
 function draw() {
-  background(50);
+blendMode(BLEND);
+  background(10);
+
   image(capture, 0, 0, width, height);
+  blendMode(ADD);
   for (var s = 0; s < SB.length; s++) {
     SB[s].update();
     SB[s].show(sun);
