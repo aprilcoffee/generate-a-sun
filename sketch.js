@@ -1,3 +1,4 @@
+
 var sun;
 var SB = [];
 var capture;
@@ -7,8 +8,7 @@ var reverb;
 var playing = false;
 
 function setup() {
- //createCanvas(displayWidth, displayHeight);
- createCanvas(window.innerWidth, window.innerHeight);
+  createCanvas(window.innerWidth, window.innerHeight);
   capture = createCapture(VIDEO);
   capture.hide();
   sun = loadImage("sun.jpg");
@@ -20,39 +20,22 @@ function setup() {
   video.hide();
   capture.hide();
   background(0);
-  osc = new p5.Oscillator();
-  osc.setType('sine');
-  osc.freq(10);
-  osc.amp(0.8);
-  osc.start();
+  //osc = new p5.Oscillator();
+  // osc.setType('sine');
+  // osc.freq(10);
+  // osc.amp(0.8);
+  // osc.start();
 
-
-  // create an audio in
-  //mic = new p5.AudioIn();
-
-  // prompts user to enable their browser mic
-  //mic.start();
-/*
-  // create a sound recorder
-  recorder = new p5.SoundRecorder();
-
-  // connect the mic to the recorder
-  recorder.setInput(mic);
-  soundFile = new p5.SoundFile();
- recorder.record(soundFile);*/
 }
 
 function draw() {
-//for(var i=0;i<10;i++){
-  //image(video, 0, 0, 100, 100);}
-  //blendMode(BLEND);
-  //background(0);
-  //blendMode(ADD);
+  background(50);
   image(capture, 0, 0, width, height);
- // for (var s = 0; s < SB.length; s++) {
-  //  SB[s].update();
-  //  SB[s].show(sun);
-  //}
+  for (var s = 0; s < SB.length; s++) {
+    SB[s].update();
+    SB[s].show(sun);
+  }
+
 
 }
 
