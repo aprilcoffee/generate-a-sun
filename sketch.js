@@ -35,8 +35,6 @@ function draw() {
     SB[s].update();
     SB[s].show(sun);
   }
-
-
 }
 
 function sunBall(A, _delta, B, C, D) {
