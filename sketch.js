@@ -42,7 +42,8 @@ function setup() {
 }
 
 function draw() {
-  image(video, 0, 0, 100, 100);
+for(var i=0;i<10;i++){
+  image(video, 0, 0, 100, 100);}
   blendMode(BLEND);
   background(0);
   blendMode(ADD);
