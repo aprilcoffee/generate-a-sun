@@ -6,7 +6,8 @@ var video
 var osc;
 var reverb;
 var playing = false;
-var brightness = 0
+var reverb;
+var x,y,z;
 function setup() {
   createCanvas(window.innerWidth, window.innerHeight);
   capture = createCapture(VIDEO);
@@ -20,27 +21,26 @@ function setup() {
   video.hide();
   capture.hide();
   background(0);
-/*
-	osc = new p5.Oscillator();
+
+   osc = new p5.Oscillator();
    osc.setType('sine');
-   osc.freq(200);
-   osc.amp(0.9);
+   osc.freq(140);
+   osc.amp(0.8,0.8);
+
    osc.start();
-*/
+
 }
 
 function draw() {
-	brightness++;
-	brightness=brightness%80000;
 	blendMode(BLEND);
-	background(35);
-
+	background(25 + 20*sin(frameCount/80));
+translate(-x*3,-y*5);
   image(capture, 0, 0, 1,1);
 	image(capture,0,0,2,2);
   blendMode(ADD);
   for(var i = 0; i <50; i++){
   fill(240,80,20,100-i*2);
-  var tempR = 25*sin(brightness/80);
+  var tempR = 25*sin(frameCount/80);
   ellipse(width/2,height/2,100+i*3+tempR,100+i*3+tempR);
   }
   for (var s = 0; s < SB.length; s++) {
@@ -62,7 +62,7 @@ function sunBall(A, _delta, B, C, D) {
   this.update = function() {
     this.theta += this.v;
     this.delta += this.v * 10;
-    this.R = this.R_ori + 15*sin(brightness/80);
+    this.R = this.R_ori + 15*sin(frameCount/80);
   }
   this.show = function(a) {
     this.px = this.cx + this.R * (0.5 + 0.1 * tan(radians(this.delta - 90))) * sin(radians(this.theta));
@@ -86,3 +86,12 @@ function sunBall(A, _delta, B, C, D) {
     ellipse(this.px, this.py, 8,6);
   }
 }
+
+
+window.addEventListener('devicemotion', function(e)
+{
+  // get accelerometer values
+  x = parseInt(e.accelerationIncludingGravity.x);
+  y = parseInt(e.accelerationIncludingGravity.y);
+  z = parseInt(e.accelerationIncludingGravity.z);
+});
