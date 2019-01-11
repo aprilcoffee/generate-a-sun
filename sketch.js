@@ -6,7 +6,7 @@ var video
 var osc;
 var reverb;
 var playing = false;
-
+var brightness = 0
 function setup() {
   createCanvas(window.innerWidth, window.innerHeight);
   capture = createCapture(VIDEO);
@@ -14,34 +14,45 @@ function setup() {
   sun = loadImage("sun.jpg");
   video = createVideo("transit.mov");
   video.loop();
-  for (var s = 0; s < 6000; s++) {
-    SB.push(new sunBall(100, random(360), s, width / 2, height / 2));
+  for (var s = 0; s < 1000; s++) {
+    SB.push(new sunBall(90, random(360), random(360), width / 2, height / 2));
   }
   video.hide();
   capture.hide();
   background(0);
-  //osc = new p5.Oscillator();
-  // osc.setType('sine');
-  // osc.freq(10);
-  // osc.amp(0.8);
-  // osc.start();
-
+/*
+	osc = new p5.Oscillator();
+   osc.setType('sine');
+   osc.freq(200);
+   osc.amp(0.9);
+   osc.start();
+*/
 }
 
 function draw() {
-blendMode(BLEND);
-  background(10);
+	brightness++;
+	brightness=brightness%80000;
+	blendMode(BLEND);
+	background(35);
 
-  image(capture, 0, 0, width, height);
+  image(capture, 0, 0, 1,1);
+	image(capture,0,0,2,2);
   blendMode(ADD);
+  for(var i = 0; i <50; i++){
+  fill(240,80,20,100-i*2);
+  var tempR = 25*sin(brightness/80);
+  ellipse(width/2,height/2,100+i*3+tempR,100+i*3+tempR);
+  }
   for (var s = 0; s < SB.length; s++) {
     SB[s].update();
     SB[s].show(sun);
   }
+	 //filter(BLUR, 3);
 }
 
 function sunBall(A, _delta, B, C, D) {
   this.R = A;
+  this.R_ori = A;
   this.theta = B;
   this.delta = _delta;
   this.cx = C;
@@ -51,26 +62,27 @@ function sunBall(A, _delta, B, C, D) {
   this.update = function() {
     this.theta += this.v;
     this.delta += this.v * 10;
+    this.R = this.R_ori + 15*sin(brightness/80);
   }
   this.show = function(a) {
     this.px = this.cx + this.R * (0.5 + 0.1 * tan(radians(this.delta - 90))) * sin(radians(this.theta));
     this.py = this.cy + this.R * (0.5 + 0.1 * tan(radians(this.delta - 90))) * cos(radians(this.theta));
     //colorMode(HSB);
 
-    if (this.delta % 180 > 135) {
+    if (this.delta % 180 > 60) {
       noStroke();
-      fill(240, 80, 10, map(this.delta % 180, 135, 180, 255, 25));
+      fill(240, 80, 10, map(this.delta % 180, 60, 180, 60, 0));
       //tint(255, map(this.delta % 180, 135, 180, 255, 0));
-    } else if (this.delta % 180 < 45) {
+    } else if (this.delta % 180 < 60) {
       noStroke();
-      fill(240, 80, 10, map(this.delta % 180, 0, 45, 25, 255));
+      fill(240, 80, 10, map(this.delta % 180, 0, 60, 0, 60));
       //tint(255, map(this.delta % 180, 0, 45, 25, 255));
     } else {
       noStroke();
-      fill(240, 80, 20);
+      fill(240, 80, 40,20);
     }
     //image(a, this.px, this.py, 6, 4.5);
-
-    ellipse(this.px, this.py, 3, 2);
+	smooth();
+    ellipse(this.px, this.py, 8,6);
   }
 }
