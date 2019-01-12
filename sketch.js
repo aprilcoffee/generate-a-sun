@@ -8,7 +8,14 @@ var reverb;
 var playing = false;
 var reverb;
 var x,y,z;
+var easing = 0.05;
+var xx;
+var yy;
+var zz;
+var flag = 0;
 function setup() {
+	xx = 0.01;
+	yy = 0.01;
   createCanvas(window.innerWidth, window.innerHeight);
   capture = createCapture(VIDEO);
   capture.hide();
@@ -25,28 +32,52 @@ function setup() {
    osc = new p5.Oscillator();
    osc.setType('sine');
    osc.freq(140);
-   osc.amp(0.8,0.8);
+   osc.amp(0.4,1);
 
    osc.start();
 
 }
 
 function draw() {
+	if(frameCount%10==0){
+ let url = 'https://api.apixu.com/v1/current.json?key=513d8003c8b348f1a2461629162106&q=NYC';
+  loadJSON(url, gotWeather);
+	}
+	image(capture,0,0,width,height);
+	flag+=0.5;
+	if(flag>100)flag=100;
 	blendMode(BLEND);
-	background(25 + 20*sin(frameCount/80));
-translate(-x*3,-y*5);
-  image(capture, 0, 0, 1,1);
-	image(capture,0,0,2,2);
+	background(30 + 25*sin(frameCount/80));
+	fill(255);
+	var targetX = x;
+	var dx = targetX - xx;
+	
+	var targetY = y;
+	var dy = targetY - yy;
+	xx += dx*easing;
+	yy += dy*easing;
+	//text(dx,width/2,height/2-150);
+	//text(dy,width/2,height/2-150+10);
+translate(-x*3,-5+y*5);
+  image(capture, width/2, height/2, 2,2);
+	image(capture,width/2,height/2,2,2);
   blendMode(ADD);
   for(var i = 0; i <50; i++){
-  fill(240,80,20,100-i*2);
+  fill(240,80,20,flag-i*2);
   var tempR = 25*sin(frameCount/80);
   ellipse(width/2,height/2,100+i*3+tempR,100+i*3+tempR);
   }
+if(flag<100){
+	for(var s=0;s<SB.length;s++){
+		SB[s].update();
+		SB[s].show(flag);
+	}
+}
+else{
   for (var s = 0; s < SB.length; s++) {
     SB[s].update();
-    SB[s].show(sun);
-  }
+    SB[s].show(flag);
+  }}
 	 //filter(BLUR, 3);
 }
 
@@ -68,10 +99,10 @@ function sunBall(A, _delta, B, C, D) {
     this.px = this.cx + this.R * (0.5 + 0.1 * tan(radians(this.delta - 90))) * sin(radians(this.theta));
     this.py = this.cy + this.R * (0.5 + 0.1 * tan(radians(this.delta - 90))) * cos(radians(this.theta));
     //colorMode(HSB);
-
+if(flag>=90){
     if (this.delta % 180 > 60) {
       noStroke();
-      fill(240, 80, 10, map(this.delta % 180, 60, 180, 60, 0));
+      fill(240, 80, 10, map(this.delta % 180, 60, 180, 160, 0));
       //tint(255, map(this.delta % 180, 135, 180, 255, 0));
     } else if (this.delta % 180 < 60) {
       noStroke();
@@ -79,8 +110,22 @@ function sunBall(A, _delta, B, C, D) {
       //tint(255, map(this.delta % 180, 0, 45, 25, 255));
     } else {
       noStroke();
+      fill(240, 80, 40,50);
+    }}
+	  else{
+if (this.delta % 180 > 60) {
+      noStroke();
+      fill(240, 80, 10, map(this.delta % 180, 60, 180, flag, 0));
+      //tint(255, map(this.delta % 180, 135, 180, 255, 0));
+    } else if (this.delta % 180 < 60) {
+      noStroke();
+      fill(240, 80, 10, map(this.delta % 180, 0, 60, 0, flag));
+      //tint(255, map(this.delta % 180, 0, 45, 25, 255));
+    } else {
+      noStroke();
       fill(240, 80, 40,20);
     }
+	  }
     //image(a, this.px, this.py, 6, 4.5);
 	smooth();
     ellipse(this.px, this.py, 8,6);
@@ -91,7 +136,23 @@ function sunBall(A, _delta, B, C, D) {
 window.addEventListener('devicemotion', function(e)
 {
   // get accelerometer values
-  x = parseInt(e.accelerationIncludingGravity.x);
-  y = parseInt(e.accelerationIncludingGravity.y);
-  z = parseInt(e.accelerationIncludingGravity.z);
+  x = e.accelerationIncludingGravity.x;
+  y = e.accelerationIncludingGravity.y;
+  z = e.accelerationIncludingGravity.z;
 });
+
+
+function gotWeather(weather) {
+ let wind; 
+  // Get the angle (convert to radians)
+  let angle = radians(Number(weather.current.wind_degree));
+  // Get the wind speed
+  let windmag = Number(weather.current.wind_mph);
+  
+  // Display as HTML elements
+  let temperatureDiv = createDiv(floor(weather.current.temp_f) + '&deg;');
+  let windDiv = createDiv("WIND " + windmag + " <small>MPH</small>");
+  
+  // Make a vector
+  wind = p5.Vector.fromAngle(angle);
+}
