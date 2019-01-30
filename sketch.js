@@ -150,8 +150,8 @@ function gotWeather(weather) {
   let windmag = Number(weather.current.wind_mph);
   
   // Display as HTML elements
-  let temperatureDiv = createDiv(floor(weather.current.temp_f) + '&deg;');
-  let windDiv = createDiv("WIND " + windmag + " <small>MPH</small>");
+  //let temperatureDiv = createDiv(floor(weather.current.temp_f) + '&deg;');
+  //let windDiv = createDiv("WIND " + windmag + " <small>MPH</small>");
   
   // Make a vector
   wind = p5.Vector.fromAngle(angle);
